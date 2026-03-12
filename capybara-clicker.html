@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Капібара Клікер 🐾</title>
+<meta property="og:title" content="Капібара Клікер 🐾">
+<meta property="og:description" content="Тапай капібару, купляй покращення та скіни!">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1a0a2e;--p1:#2d1b4e;--p2:#3d2560;
+  --acc:#f5a623;--acc2:#ff6b9d;
+  --grn:#4ade80;--blu:#60a5fa;--pur:#a855f7;
+  --txt:#f0e6ff;--mut:#9d7ec9;
+  --brd:rgba(255,255,255,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--bg);color:var(--txt);
+  min-height:100vh;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 15% 15%,rgba(100,50,200,.28) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 85%,rgba(245,100,150,.18) 0%,transparent 55%);
+}
+
+/* ── HEADER ── */
+.hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px 4px;flex-wrap:wrap;gap:8px;
+}
+h1{
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(1.6rem,3.5vw,2.6rem);
+  background:linear-gradient(90deg,#f5a623,#ff6b9d,#a855f7);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 18px rgba(245,166,35,.45));
+  white-space:nowrap;
+}
+.hdr-btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:.82rem;
+  border:none;border-radius:20px;padding:7px 16px;cursor:pointer;
+  transition:all .15s ease;letter-spacing:.3px;
+}
+.btn-share{background:linear-gradient(135deg,#7c3aed,var(--pur));color:#fff;box-shadow:0 0 14px rgba(124,58,237,.35)}
+.btn-save{background:linear-gradient(135deg,#059669,#4ade80);color:#fff;box-shadow:0 0 14px rgba(74,222,128,.3)}
+.btn-reset{background:rgba(255,255,255,.08);color:var(--mut);border:1px solid var(--brd)}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.12)}
+.btn:active{transform:scale(.96)}
+
+/* ── STATS BAR ── */
+.stats-bar{
+  display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+  padding:6px 16px 12px;
+}
+.chip{
+  background:var(--p1);border:1px solid var(--brd);
+  border-radius:28px;padding:5px 15px;
+  font-size:.88rem;font-weight:700;
+  display:flex;align-items:center;gap:5px;
+}
+.chip b{font-size:1rem}
+.chip b.g{color:var(--grn)}
+.chip b.a{color:var(--acc)}
+.chip b.bl{color:var(--blu)}
+
+/* ── LAYOUT ── */
+.layout{
+  display:grid;grid-template-columns:1fr 290px 1fr;
+  gap:12px;max-width:1160px;margin:0 auto;
+  padding:0 12px 30px;
+}
+@media(max-width:840px){
+  .layout{grid-template-columns:1fr}
+  .col-l{order:2}.col-c{order:1}.col-r{order:3}
+}
+
+/* ── PANEL ── */
+.panel{
+  background:var(--p1);border-radius:18px;
+  border:1px solid var(--brd);padding:13px;
+  height:fit-content;
+}
+.ptitle{
+  font-family:'Fredoka One',cursive;font-size:1.1rem;
+  margin-bottom:9px;color:var(--acc);
+  display:flex;align-items:center;gap:6px;
+}
+
+/* ── CENTER ── */
+.col-c{display:flex;flex-direction:column;align-items:center;gap:10px}
+
+.capy-wrap{
+  position:relative;width:220px;height:220px;
+  cursor:pointer;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  will-change:transform;
+}
+.capy-bg{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,166,35,.16) 0%,transparent 70%);
+  animation:pbg 2.2s ease-in-out infinite;
+}
+@keyframes pbg{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.1);opacity:1}}
+.capy-ring{
+  position:absolute;inset:-9px;border-radius:50%;
+  border:3px solid transparent;
+  background:linear-gradient(135deg,var(--acc),var(--acc2)) border-box;
+  -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:destination-out;mask-composite:exclude;
+  animation:spin 5s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.capy-face{
+  position:absolute;inset:0;display:flex;
+  align-items:center;justify-content:center;
+  font-size:115px;
+  transition:transform .07s ease,filter .07s ease;
+  filter:drop-shadow(0 6px 20px rgba(0,0,0,.5));
+}
+.capy-wrap:active .capy-face{
+  transform:scale(.87);
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.5)) brightness(1.3);
+}
+.tap-label{
+  font-family:'Fredoka One',cursive;font-size:.9rem;
+  color:var(--mut);letter-spacing:2px;text-transform:uppercase;
+}
+.mult-badge{
+  background:linear-gradient(135deg,#6d28d9,var(--pur));
+  border-radius:18px;padding:5px 16px;
+  font-weight:800;font-size:.85rem;
+  border:1px solid rgba(168,85,247,.4);
+  box-shadow:0 0 14px rgba(168,85,247,.25);
+}
+
+/* ── FLOAT NUMS ── */
+.fn{
+  position:fixed;font-family:'Fredoka One',cursive;
+  font-size:1.35rem;color:var(--acc);
+  pointer-events:none;z-index:999;
+  animation:fup .8s ease-out forwards;
+  text-shadow:0 0 10px rgba(245,166,35,.7);
+}
+@keyframes fup{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-75px) scale(1.3)}}
+
+/* ── UPGRADES ── */
+.upg-list{display:flex;flex-direction:column;gap:6px}
+.uc{
+  background:var(--p2);border-radius:12px;
+  border:1px solid var(--brd);padding:8px 10px;
+  display:flex;align-items:center;gap:8px;
+  cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .12s,opacity .15s;
+  position:relative;overflow:hidden;
+}
+.uc::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);
+  transform:translateX(-100%);transition:transform .4s;
+}
+.uc:hover::after{transform:translateX(100%)}
+.uc:hover:not(.lk):not(.mx){
+  border-color:rgba(245,166,35,.4);
+  box-shadow:0 0 12px rgba(245,166,35,.12);
+  transform:translateY(-1px);
+}
+.uc.lk{opacity:.38;cursor:not-allowed}
+.uc.mx{border-color:rgba(74,222,128,.28);background:rgba(74,222,128,.05);cursor:default}
+.ui{font-size:1.6rem;flex-shrink:0}
+.un{font-weight:800;font-size:.8rem}
+.ud{font-size:.68rem;color:var(--mut)}
+.ur{text-align:right;flex-shrink:0;min-width:56px}
+.uc-cost{font-family:'Fredoka One',cursive;font-size:.84rem;color:var(--acc)}
+.uc-lvl{font-size:.62rem;color:var(--mut);font-weight:700}
+.uc-max{font-size:.68rem;color:var(--grn);font-weight:900}
+
+/* ── SKINS ── */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.sc{
+  background:var(--p2);border-radius:12px;
+  border:2px solid var(--brd);padding:9px 6px 7px;
+  cursor:pointer;text-align:center;
+  transition:border-color .15s,box-shadow .15s,transform .12s,opacity .15s;
+}
+.sc:hover:not(.sl):not(.sa){border-color:rgba(245,166,35,.45);transform:translateY(-2px)}
+.sc.sa{border-color:var(--acc);box-shadow:0 0 16px rgba(245,166,35,.28);background:rgba(245,166,35,.07)}
+.sc.sl{opacity:.35;cursor:not-allowed}
+.se{font-size:1.9rem;display:block;margin-bottom:3px}
+.sn{font-size:.68rem;font-weight:800;line-height:1.2}
+.sm{font-size:.6rem;color:var(--acc);font-weight:700;margin-top:1px}
+.sc-cost{font-size:.6rem;color:var(--mut);font-weight:700;margin-top:2px}
+.sc-own{font-size:.58rem;color:var(--grn);font-weight:900;margin-top:2px}
+
+/* ── ACHIEVEMENTS ── */
+.al{display:flex;flex-direction:column;gap:5px}
+.ai{
+  display:flex;align-items:center;gap:7px;
+  background:var(--p2);border-radius:9px;
+  padding:6px 9px;border:1px solid var(--brd);font-size:.75rem;
+}
+.ai.ad{border-color:rgba(245,166,35,.28)}
+.ai.ak{opacity:.3}
+.aico{font-size:1.1rem}
+.an{font-weight:800}
+.adsc{font-size:.63rem;color:var(--mut)}
+
+/* ── SAVE INDICATOR ── */
+.save-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--grn);display:inline-block;
+  margin-right:4px;box-shadow:0 0 6px var(--grn);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── SHARE MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  z-index:9998;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--p1);border-radius:20px;
+  border:1px solid rgba(168,85,247,.3);
+  padding:24px;max-width:480px;width:90%;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  transform:translateY(20px);transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal h2{
+  font-family:'Fredoka One',cursive;font-size:1.5rem;
+  color:var(--acc);margin-bottom:8px;
+}
+.modal p{font-size:.85rem;color:var(--mut);margin-bottom:12px;line-height:1.5}
+.url-box{
+  background:var(--p2);border-radius:10px;border:1px solid var(--brd);
+  padding:10px 12px;font-size:.75rem;color:var(--txt);
+  word-break:break-all;margin-bottom:12px;max-height:80px;overflow-y:auto;
+  font-family:monospace;
+}
+.modal-btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn-copy{background:linear-gradient(135deg,#7c3aed,var(--pur));color:#fff;font-size:.85rem}
+.btn-close{background:rgba(255,255,255,.08);color:var(--mut);font-size:.85rem}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:20px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:linear-gradient(135deg,#6d28d9,var(--pur));
+  color:#fff;padding:10px 22px;border-radius:26px;
+  font-weight:800;font-size:.88rem;z-index:9999;
+  transition:transform .38s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 8px 28px rgba(109,40,217,.5);
+  pointer-events:none;white-space:nowrap;
+}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--mut);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <h1>🐾 Капібара Клікер</h1>
+  <div class="hdr-btns">
+    <button class="btn btn-save" onclick="saveGame()"><span class="save-dot"></span>Зберегти</button>
+    <button class="btn btn-share" onclick="openShare()">🔗 Поділитись</button>
+    <button class="btn btn-reset" onclick="resetGame()">🔄 Скинути</button>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="chip">🪙 <b class="a" id="s-tok">0</b>&nbsp;токенів</div>
+  <div class="chip">👆 <b class="a" id="s-cpc">1</b>/клік</div>
+  <div class="chip">⚡ <b class="g" id="s-tps">0</b>/сек</div>
+  <div class="chip">📦 Всього: <b class="bl" id="s-tot">0</b></div>
+</div>
+
+<div class="layout">
+  <div class="col-l panel">
+    <div class="ptitle">⬆️ Покращення</div>
+    <div class="upg-list" id="upg-list"></div>
+  </div>
+
+  <div class="col-c">
+    <div class="capy-wrap" id="capy-btn">
+      <div class="capy-bg"></div>
+      <div class="capy-ring"></div>
+      <div class="capy-face" id="capy-face">🦫</div>
+    </div>
+    <div class="tap-label">Тапай!</div>
+    <div class="mult-badge" id="mult-badge">✨ Мультиплеєр ×1</div>
+
+    <div class="panel" style="width:100%">
+      <div class="ptitle">🏆 Досягнення</div>
+      <div class="al" id="ach-list"></div>
+    </div>
+  </div>
+
+  <div class="col-r panel">
+    <div class="ptitle">🎨 Скіни Капібари</div>
+    <div class="sg" id="skin-grid"></div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeShareOutside(event)">
+  <div class="modal">
+    <h2>🔗 Поділитись / Експорт</h2>
+    <p id="share-note" style="display:none;font-size:.8rem;color:#f0c070;margin-bottom:10px;line-height:1.6;background:rgba(245,166,35,.08);border-radius:10px;padding:10px;border:1px solid rgba(245,166,35,.2)"></p>
+    <p style="font-size:.8rem;color:var(--mut);margin-bottom:8px">Код збереження (скопіюй і передай другу):</p>
+    <div class="url-box" id="share-url">Генерується...</div>
+    <div class="modal-btns">
+      <button class="btn btn-copy" onclick="copyUrl()">📋 Скопіювати код</button>
+      <button class="btn btn-close" onclick="closeShare()">✕ Закрити</button>
+    </div>
+    <div id="import-row" style="display:none;margin-top:14px;flex-direction:column;gap:6px">
+      <p style="font-size:.8rem;color:var(--mut)">📥 Імпорт коду від друга:</p>
+      <div style="display:flex;gap:8px">
+        <input id="import-input" type="text" placeholder="Встав код збереження тут..."
+          style="flex:1;background:var(--p2);border:1px solid var(--brd);border-radius:10px;padding:8px 12px;color:var(--txt);font-size:.78rem;outline:none;font-family:monospace">
+        <button class="btn btn-save" style="font-size:.78rem;white-space:nowrap" onclick="importSave()">✅ Завантажити</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   DATA
+═══════════════════════════════════════ */
+const SKINS=[
+  {id:'normal',  e:'🦫',    n:'Звичайна',     m:1,  c:0},
+  {id:'rainbow', e:'🌈🦫',  n:'Веселкова',    m:3,  c:500},
+  {id:'galaxy',  e:'🌌🦫',  n:'Галактік',     m:2,  c:350},
+  {id:'gold',    e:'🏆🦫',  n:'Золота',       m:5,  c:2000},
+  {id:'fire',    e:'🔥🦫',  n:'Вогняна',      m:4,  c:1200},
+  {id:'cyber',   e:'🤖🦫',  n:'Кіберпанк',    m:7,  c:5000},
+  {id:'angel',   e:'😇🦫',  n:'Янгол',        m:6,  c:3500},
+  {id:'demon',   e:'😈🦫',  n:'Демон',        m:8,  c:8000},
+  {id:'diamond', e:'💎🦫',  n:'Діамантова',   m:10, c:15000},
+  {id:'ninja',   e:'🥷🦫',  n:'Ніндзя',       m:12, c:30000},
+  {id:'dragon',  e:'🐉🦫',  n:'Дракон',       m:15, c:60000},
+  {id:'astro',   e:'🚀🦫',  n:'Астронавт',    m:20, c:120000},
+  {id:'pharaoh', e:'👑🦫',  n:'Фараон',       m:25, c:250000},
+  {id:'god',     e:'⚡🦫',  n:'Бог Капібара', m:50, c:999999},
+];
+
+const UPGRADES=[
+  {id:'c1',i:'🐾',n:'Міцніші лапи',   d:'+1 токен/клік',     t:'c',v:1,  b:15},
+  {id:'c2',i:'✂️',n:'Гострі кігті',   d:'+2 токени/клік',    t:'c',v:2,  b:60},
+  {id:'c3',i:'👐',n:'Подвійний тап',  d:'+5 токенів/клік',   t:'c',v:5,  b:200},
+  {id:'c4',i:'⚡',n:'Турбо-клік',     d:'+10 токенів/клік',  t:'c',v:10, b:700},
+  {id:'c5',i:'🦾',n:'Гіпер-лапи',    d:'+25 токенів/клік',  t:'c',v:25, b:2500},
+  {id:'c6',i:'🌀',n:'Квантовий тап',  d:'+75 токенів/клік',  t:'c',v:75, b:9000},
+  {id:'c7',i:'🌟',n:'Зоряний удар',   d:'+200 токенів/клік', t:'c',v:200,b:35000},
+  {id:'s1',i:'🌱',n:'Маленька ферма', d:'+1 токен/сек',      t:'s',v:1,  b:25},
+  {id:'s2',i:'🏡',n:'Капібара-ферма', d:'+3 токени/сек',     t:'s',v:3,  b:90},
+  {id:'s3',i:'🏭',n:'Токен-завод',    d:'+8 токенів/сек',    t:'s',v:8,  b:350},
+  {id:'s4',i:'⛏️',n:'Капіба-майнер',  d:'+20 токенів/сек',   t:'s',v:20, b:1200},
+  {id:'s5',i:'💫',n:'Квантова шахта', d:'+60 токенів/сек',   t:'s',v:60, b:5000},
+  {id:'s6',i:'🏙️',n:'Мегаполіс',     d:'+150 токенів/сек',  t:'s',v:150,b:18000},
+  {id:'s7',i:'🌌',n:'Галакт-реактор', d:'+500 токенів/сек',  t:'s',v:500,b:75000},
+];
+const ML={c:15,s:20};
+
+const ACHS=[
+  {id:'a1',i:'🐾',n:'Перший клік!',    d:'Заробити перший токен',  f:s=>s.tot>=1},
+  {id:'a2',i:'💰',n:'Сотня токенів',   d:'Заробити 100 токенів',   f:s=>s.tot>=100},
+  {id:'a3',i:'🏆',n:'Тисячник',        d:'Заробити 1 000 токенів', f:s=>s.tot>=1000},
+  {id:'a4',i:'💎',n:'Мільйонер',       d:'Заробити 1 000 000',     f:s=>s.tot>=1e6},
+  {id:'a5',i:'🌈',n:'Колекціонер',     d:'Мати 4 скіни',           f:s=>s.skins.length>=4},
+  {id:'a6',i:'🚀',n:'Апгрейдер',       d:'Купити 10 покращень',    f:s=>s.tups>=10},
+  {id:'a7',i:'⚡',n:'Генератор',       d:'20+ токенів/сек',        f:s=>s.tps>=20},
+  {id:'a8',i:'😈',n:'Темна Капібара',  d:'Купити скін Демон',      f:s=>s.skins.includes('demon')},
+  {id:'a9',i:'👑',n:'Легенда',         d:'Заробити мільярд',       f:s=>s.tot>=1e9},
+];
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+const SAVE_KEY='capy_save_v2';
+
+function defaultState(){
+  return{
+    tok:0, tot:0, tups:0,
+    skin:'normal', skins:['normal'],
+    lvl:Object.fromEntries(UPGRADES.map(u=>[u.id,0])),
+    ach:[], // array of strings
+    // computed (not saved):
+    cp:1, tps:0, mult:1,
+  };
+}
+
+let G=defaultState();
+
+/* ═══════════════════════════════════════
+   SAVE / LOAD
+═══════════════════════════════════════ */
+function serialize(){
+  return{
+    tok:Math.floor(G.tok),
+    tot:Math.floor(G.tot),
+    tups:G.tups,
+    skin:G.skin,
+    skins:G.skins,
+    lvl:G.lvl,
+    ach:G.ach,
+  };
+}
+
+function saveGame(silent){
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(serialize()));}catch(e){}
+  if(!silent) toast('💾 Збережено!');
+}
+
+function loadState(data){
+  if(!data) return false;
+  try{
+    const d=typeof data==='string'?JSON.parse(data):data;
+    G=defaultState();
+    if(d.tok!=null) G.tok=d.tok;
+    if(d.tot!=null) G.tot=d.tot;
+    if(d.tups!=null) G.tups=d.tups;
+    if(d.skin&&SKINS.find(s=>s.id===d.skin)) G.skin=d.skin;
+    if(Array.isArray(d.skins)) G.skins=d.skins.filter(id=>SKINS.find(s=>s.id===id));
+    if(!G.skins.includes('normal')) G.skins.unshift('normal');
+    if(d.lvl) UPGRADES.forEach(u=>{if(d.lvl[u.id]!=null) G.lvl[u.id]=Math.min(d.lvl[u.id],ML[u.t]);});
+    if(Array.isArray(d.ach)) G.ach=d.ach.filter(id=>ACHS.find(a=>a.id===id));
+    return true;
+  }catch(e){return false;}
+}
+
+function loadGame(){
+  // 1. Check URL hash first (shared link)
+  const hash=location.hash.slice(1);
+  if(hash){
+    try{
+      const decoded=JSON.parse(atob(hash));
+      if(loadState(decoded)){
+        history.replaceState(null,'',location.pathname+location.search);
+        toast('🎉 Гра завантажена з посилання!');
+        return;
+      }
+    }catch(e){}
+  }
+  // 2. Fallback to localStorage
+  const saved=localStorage.getItem(SAVE_KEY);
+  if(saved) loadState(saved);
+}
+
+function resetGame(){
+  if(!confirm('Скинути весь прогрес? 😢')) return;
+  G=defaultState();
+  localStorage.removeItem(SAVE_KEY);
+  toast('🔄 Прогрес скинуто');
+  recalc(); fullRender();
+}
+
+// Auto-save every 10s
+setInterval(()=>saveGame(true),10000);
+
+/* ═══════════════════════════════════════
+   SHARE
+═══════════════════════════════════════ */
+// Hosted URL where the game file lives — update this if you host it elsewhere
+const HOSTED_URL='https://capy-clicker.netlify.app/';
+
+function buildShareUrl(){
+  const payload=btoa(JSON.stringify(serialize()));
+  // If running normally in a browser, use current URL; otherwise show instructions
+  const base=(location.protocol==='http:'||location.protocol==='https:')
+    ? location.origin+location.pathname
+    : null;
+  if(base) return base+'#'+payload;
+  return payload; // fallback: just the encoded save string
+}
+
+function openShare(){
+  const url=buildShareUrl();
+  const isEncoded=!url.startsWith('http');
+  const box=document.getElementById('share-url');
+  const note=document.getElementById('share-note');
+  box.textContent=url;
+  if(isEncoded){
+    note.innerHTML='⚠️ Гра запущена в iframe (claude.ai). Щоб поділитись:<br>1. Збережи файл <b>capybara-clicker.html</b> на комп\'ютер<br>2. Завантаж на <a href="https://app.netlify.com/drop" target="_blank" style="color:var(--acc)">netlify.com/drop</a> або будь-який хостинг<br>3. Додай <b>#</b> і код нижче до свого URL<br><br>Або скопіюй код збереження і передай другу — він вставить його в гру через кнопку "Імпорт":';
+    note.style.display='block';
+    document.getElementById('import-row').style.display='flex';
+  } else {
+    note.style.display='none';
+    document.getElementById('import-row').style.display='none';
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeShare(){document.getElementById('modal-overlay').classList.remove('open')}
+function closeShareOutside(e){if(e.target===document.getElementById('modal-overlay')) closeShare();}
+function copyUrl(){
+  const url=document.getElementById('share-url').textContent;
+  navigator.clipboard.writeText(url).then(()=>toast('✅ Скопійовано!')).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=url;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');ta.remove();
+    toast('✅ Скопійовано!');
+  });
+}
+
+function importSave(){
+  const raw=document.getElementById('import-input').value.trim();
+  if(!raw){toast('⚠️ Встав код збереження!');return;}
+  try{
+    const decoded=JSON.parse(atob(raw));
+    if(loadState(decoded)){
+      recalc();_upgState=null;_skinState=null;_achState=null;
+      fullRender();saveGame(true);
+      closeShare();
+      toast('🎉 Прогрес імпортовано!');
+    } else {toast('❌ Невірний код!');}
+  }catch(e){toast('❌ Невірний код збереження!');}
+}
+
+/* ═══════════════════════════════════════
+   COMPUTE
+═══════════════════════════════════════ */
+function recalc(){
+  G.cp=1; G.tps=0;
+  UPGRADES.forEach(u=>{
+    const l=G.lvl[u.id];
+    if(u.t==='c') G.cp+=u.v*l;
+    else G.tps+=u.v*l;
+  });
+  const sk=SKINS.find(s=>s.id===G.skin);
+  G.mult=sk?sk.m:1;
+}
+
+function upgCost(u){return Math.floor(u.b*Math.pow(1.55,G.lvl[u.id]));}
+
+/* ═══════════════════════════════════════
+   RENDER (optimised — only update changed)
+═══════════════════════════════════════ */
+// Cache last rendered values to skip DOM updates when unchanged
+const _cache={};
+function setTxt(id,val){
+  if(_cache[id]===val) return;
+  _cache[id]=val;
+  document.getElementById(id).textContent=val;
+}
+
+function fmt(n){
+  n=Math.floor(n);
+  if(n>=1e9) return(n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return(n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return(n/1e3).toFixed(1)+'K';
+  return n.toString();
+}
+
+function updateStats(){
+  setTxt('s-tok',fmt(G.tok));
+  setTxt('s-cpc',fmt(G.cp*G.mult));
+  setTxt('s-tps',fmt(G.tps*G.mult));
+  setTxt('s-tot',fmt(G.tot));
+  setTxt('mult-badge',`✨ Мультиплеєр ×${G.mult}`);
+  setTxt('capy-face',SKINS.find(s=>s.id===G.skin)?.e||'🦫');
+}
+
+// Track which upgrade cards exist and their states to minimise DOM work
+let _upgState=null;
+function renderUpgrades(){
+  const nextState=UPGRADES.map(u=>{
+    const l=G.lvl[u.id],mx=l>=ML[u.t],cost=upgCost(u);
+    return mx?'mx':G.tok>=cost?'ok':'lk';
+  }).join('|');
+  if(_upgState===nextState) return; // nothing changed
+  _upgState=nextState;
+
+  const el=document.getElementById('upg-list');
+  el.innerHTML='';
+  UPGRADES.forEach(u=>{
+    const l=G.lvl[u.id],maxLv=ML[u.t],mx=l>=maxLv,cost=upgCost(u),can=!mx&&G.tok>=cost;
+    const d=document.createElement('div');
+    d.className='uc'+(mx?' mx':(!can?' lk':''));
+    d.innerHTML=`<div class="ui">${u.i}</div><div style="flex:1;min-width:0"><div class="un">${u.n}</div><div class="ud">${u.d}</div></div><div class="ur">${
+      mx?`<div class="uc-max">✅ МАКС</div><div class="uc-lvl">${l}/${maxLv}</div>`
+        :`<div class="uc-cost">🪙${fmt(cost)}</div><div class="uc-lvl">Рів. ${l}/${maxLv}</div>`
+    }</div>`;
+    if(!mx&&can) d.onclick=()=>buyUpg(u);
+    el.appendChild(d);
+  });
+}
+
+let _skinState=null;
+function renderSkins(){
+  const nextState=G.skins.join(',')+G.skin+fmt(G.tok);
+  if(_skinState===nextState) return;
+  _skinState=nextState;
+
+  const el=document.getElementById('skin-grid');
+  el.innerHTML='';
+  SKINS.forEach(s=>{
+    const owned=G.skins.includes(s.id),active=G.skin===s.id,canBuy=!owned&&G.tok>=s.c;
+    const d=document.createElement('div');
+    d.className='sc'+(active?' sa':'')+(!owned&&!canBuy?' sl':'');
+    d.innerHTML=`<span class="se">${s.e}</span><div class="sn">${s.n}</div><div class="sm">×${s.m} мульт.</div>${
+      !owned?`<div class="sc-cost">🪙${fmt(s.c)}</div>`
+            :(active?`<div class="sc-own">● активний</div>`:`<div class="sc-own">✓ є</div>`)
+    }`;
+    d.onclick=()=>{
+      if(owned&&!active){G.skin=s.id;_skinState=null;recalc();updateStats();renderSkins();}
+      else if(!owned&&canBuy){
+        G.tok-=s.c;G.skins.push(s.id);G.skin=s.id;
+        toast(`🎉 Скін "${s.n}" розблоковано!`);
+        _skinState=null;recalc();updateStats();renderSkins();renderUpgrades();
+        checkAch();
+      }
+    };
+    el.appendChild(d);
+  });
+}
+
+let _achState=null;
+function renderAch(){
+  const nextState=G.ach.join(',');
+  if(_achState===nextState) return;
+  _achState=nextState;
+
+  const el=document.getElementById('ach-list');
+  el.innerHTML='';
+  ACHS.forEach(a=>{
+    const done=G.ach.includes(a.id);
+    const d=document.createElement('div');
+    d.className='ai '+(done?'ad':'ak');
+    d.innerHTML=`<div class="aico">${done?a.i:'❓'}</div><div><div class="an">${done?a.n:'???'}</div><div class="adsc">${done?a.d:'Ще не відкрито'}</div></div>`;
+    el.appendChild(d);
+  });
+}
+
+function checkAch(){
+  let changed=false;
+  ACHS.forEach(a=>{
+    if(!G.ach.includes(a.id)&&a.f(G)){
+      G.ach.push(a.id);
+      toast(`🏆 Досягнення: "${a.n}"!`);
+      changed=true;
+    }
+  });
+  if(changed){_achState=null;renderAch();}
+}
+
+function fullRender(){
+  updateStats();renderUpgrades();renderSkins();renderAch();checkAch();
+}
+
+/* ═══════════════════════════════════════
+   ACTIONS
+═══════════════════════════════════════ */
+function buyUpg(u){
+  const cost=upgCost(u);
+  if(G.tok<cost) return;
+  G.tok-=cost;G.lvl[u.id]++;G.tups++;
+  toast(`✅ ${u.n} → Рівень ${G.lvl[u.id]}`);
+  _upgState=null;recalc();updateStats();renderUpgrades();checkAch();
+}
+
+// Click handler
+document.getElementById('capy-btn').addEventListener('click',e=>{
+  const earned=G.cp*G.mult;
+  G.tok+=earned;G.tot+=earned;
+  updateStats();renderUpgrades();renderSkins();checkAch();
+
+  // Float number (pooled — max 8 at once)
+  const existing=document.querySelectorAll('.fn');
+  if(existing.length<8){
+    const el=document.createElement('div');
+    el.className='fn';
+    el.textContent='+'+fmt(earned);
+    el.style.cssText=`left:${e.clientX-20}px;top:${e.clientY-14}px`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),800);
+  }
+},{passive:true});
+
+/* ═══════════════════════════════════════
+   TICK — passive/sec income
+   Uses requestAnimationFrame for smoothness,
+   with a fixed 50ms bucket size
+═══════════════════════════════════════ */
+let lastTick=performance.now();
+let tickAccum=0;
+const TICK=50; // ms
+let rafId;
+
+function gameTick(now){
+  const dt=now-lastTick;
+  lastTick=now;
+  tickAccum+=dt;
+
+  if(tickAccum>=TICK&&G.tps>0){
+    const steps=Math.floor(tickAccum/TICK);
+    tickAccum-=steps*TICK;
+    const earned=(G.tps*G.mult)*(steps*TICK/1000);
+    G.tok+=earned;G.tot+=earned;
+    updateStats();renderUpgrades();renderSkins();checkAch();
+  }
+  rafId=requestAnimationFrame(gameTick);
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+let _toastT;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+loadGame();
+recalc();
+fullRender();
+rafId=requestAnimationFrame(gameTick);
+
+// Save on page hide
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden') saveGame(true);
+});
+window.addEventListener('beforeunload',()=>saveGame(true));
+</script>
+</body>
+</html>
